@@ -1,0 +1,88 @@
+// postcss.config.js
+// frontend/postcss.config.js
+
+export default {
+  plugins: {
+    // 1. Importar archivos CSS (para usar @import)
+    'postcss-import': {
+      path: ['./src/styles'],
+      plugins: [
+        // Plugin para procesar importaciones de Tailwind
+        ['postcss-import', {
+          resolve: (id, basedir, importOptions) => {
+            if (id.startsWith('~')) {
+              return import.meta.resolve?.(id.slice(1)) || require.resolve(id.slice(1));
+            }
+            return import.meta.resolve?.(id, { paths: [basedir] }) || require.resolve(id, { paths: [basedir] });
+          }
+        }]
+      ]
+    },
+    
+    // 2. Mixins para CSS (reutilizar estilos)
+    'postcss-mixins': {
+      mixins: {
+        'clearfix': () => ({
+          '&::after': {
+            content: '""',
+            display: 'table',
+            clear: 'both'
+          }
+        }),
+        'truncate': () => ({
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
+        }),
+        'absolute-center': () => ({
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
+        }),
+        'flex-center': () => ({
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        })
+      }
+    },
+    
+    // 3. Nesting de CSS (anidamiento)
+    'postcss-nesting': {},
+    
+    // 4. TailwindCSS principal
+    tailwindcss: {},
+    
+    // 5. Autoprefixer
+    autoprefixer: {
+      flexbox: 'no-2009',
+      grid: 'autoplace',
+      overrideBrowserslist: [
+        '> 0.5%',
+        'last 2 versions',
+        'Firefox ESR',
+        'not dead',
+        'not op_mini all'
+      ]
+    },
+    
+    // 6. Optimizaciones para producción
+    ...(process.env.NODE_ENV === 'production' && {
+      cssnano: {
+        preset: ['advanced', {
+          discardComments: {
+            removeAll: true
+          },
+          normalizeUrl: {
+            force: true
+          },
+          reduceIdents: {
+            keyframes: false
+          },
+          zindex: false
+        }]
+      }
+    })
+  }
+}
