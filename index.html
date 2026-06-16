@@ -209,26 +209,20 @@
     <!-- ======================================================================= -->
     <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
     
-    <!-- ======================================================================= -->
-    <!-- REGISTRO DE SERVICE WORKER (opcional, para PWA)                         -->
-    <!-- ======================================================================= -->
-    <script>
-      if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+    <!-- Registro de Service Worker solo en producción -->
+    <script type="module">
+      if ('serviceWorker' in navigator && import.meta.env.PROD) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').then(registration => {
+          navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).then((registration) => {
             console.log('Service Worker registrado:', registration.scope);
-          }).catch(error => {
+          }).catch((error) => {
             console.log('Error registrando Service Worker:', error);
           });
         });
       }
     </script>
     
-    <!-- ======================================================================= -->
-    <!-- EL ARCHIVO PRINCIPAL DE REACT SE INYECTA AUTOMÁTICAMENTE POR VITE       -->
-    <!-- ======================================================================= -->
-    <!-- Vite inyecta automáticamente <script type="module" src="/src/index.js"> -->
-    <!-- No es necesario agregarlo manualmente                                   -->
-    <!-- ======================================================================= -->
+    <!-- Punto de entrada de React (requerido por Vite) -->
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

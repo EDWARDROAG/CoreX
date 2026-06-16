@@ -3,6 +3,7 @@
 
 // frontend/src/hooks/useWhatsApp.js
 import { useState, useCallback } from 'react';
+import { APP_ENV } from '../config/env';
 
 const useWhatsApp = () => {
   const [loading, setLoading] = useState(false);
@@ -10,11 +11,11 @@ const useWhatsApp = () => {
   const [messageStatus, setMessageStatus] = useState(null);
 
   // Número de teléfono por defecto (configurable)
-  const DEFAULT_PHONE = process.env.REACT_APP_WHATSAPP_PHONE || '1234567890';
+  const DEFAULT_PHONE = APP_ENV.WHATSAPP_PHONE;
 
   // Configuración de WhatsApp Business API (si se usa)
-  const WHATSAPP_API_URL = process.env.REACT_APP_WHATSAPP_API_URL;
-  const WHATSAPP_API_TOKEN = process.env.REACT_APP_WHATSAPP_API_TOKEN;
+  const WHATSAPP_API_URL = APP_ENV.WHATSAPP_API_URL;
+  const WHATSAPP_API_TOKEN = APP_ENV.WHATSAPP_API_TOKEN;
 
   // Formatear número de teléfono
   const formatPhoneNumber = useCallback((phoneNumber) => {
@@ -359,6 +360,8 @@ const useWhatsApp = () => {
     setMessageStatus(null);
   }, []);
 
+  const getDefaultWhatsAppNumber = useCallback(() => DEFAULT_PHONE, [DEFAULT_PHONE]);
+
   return {
     // Estado
     loading,
@@ -386,6 +389,7 @@ const useWhatsApp = () => {
     createCartMessage,
     createContactMessage,
     generateFloatingButton,
+    getDefaultWhatsAppNumber,
     
     // Métodos de WhatsApp Business
     getQRCode,
@@ -400,4 +404,5 @@ const useWhatsApp = () => {
   };
 };
 
+export { useWhatsApp };
 export default useWhatsApp;

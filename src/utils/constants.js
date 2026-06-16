@@ -2,13 +2,14 @@
 // CoreX - Generado automáticamente
 
 // frontend/src/utils/constants.js
+import { APP_ENV } from '../config/env';
 
 // ============================================
 // CONSTANTES DE API
 // ============================================
 
 export const API_CONFIG = {
-  BASE_URL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+  BASE_URL: APP_ENV.API_URL,
   TIMEOUT: 30000,
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000,

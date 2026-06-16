@@ -3,9 +3,10 @@
 
 // frontend/src/services/api.js
 import axios from 'axios';
+import { APP_ENV } from '../config/env';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+  baseURL: APP_ENV.API_URL,
   headers: {
     'Content-Type': 'application/json',
   },

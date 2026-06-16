@@ -2,17 +2,18 @@
 // CoreX - Generado automáticamente
 
 // frontend/src/utils/whatsappHelper.js
+import { APP_ENV } from '../config/env';
 
 /**
  * Configuración de WhatsApp
  */
 export const WHATSAPP_CONFIG = {
-  DEFAULT_PHONE: process.env.REACT_APP_WHATSAPP_PHONE || '34123456789',
+  DEFAULT_PHONE: APP_ENV.WHATSAPP_PHONE,
   DEFAULT_MESSAGE: '¡Hola! Me gustaría obtener más información.',
-  API_URL: process.env.REACT_APP_WHATSAPP_API_URL,
-  API_TOKEN: process.env.REACT_APP_WHATSAPP_API_TOKEN,
-  BUSINESS_ACCOUNT: process.env.REACT_APP_WHATSAPP_BUSINESS_ACCOUNT === 'true',
-  WEBHOOK_URL: process.env.REACT_APP_WHATSAPP_WEBHOOK_URL
+  API_URL: APP_ENV.WHATSAPP_API_URL,
+  API_TOKEN: APP_ENV.WHATSAPP_API_TOKEN,
+  BUSINESS_ACCOUNT: APP_ENV.WHATSAPP_BUSINESS_ACCOUNT,
+  WEBHOOK_URL: APP_ENV.WHATSAPP_WEBHOOK_URL
 };
 
 /**
@@ -514,6 +515,18 @@ export const checkWhatsAppSession = async (sessionId) => {
     console.error('Error checking session:', error);
     return { connected: false, error: error.message };
   }
+};
+
+export const getWhatsAppLink = (type = 'general', customMessage = '') => {
+  const messages = {
+    general: '¡Hola! Me gustaría obtener más información sobre CoreX.',
+    product: '¡Hola! Me interesa un producto de CoreX.',
+    maintenance: '¡Hola! Necesito información sobre mantenimiento.',
+    contact: '¡Hola! Quisiera contactar con CoreX.',
+  };
+
+  const message = customMessage || messages[type] || messages.general;
+  return generateWhatsAppUrl(WHATSAPP_CONFIG.DEFAULT_PHONE, message);
 };
 
 // Exportar todas las utilidades

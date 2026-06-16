@@ -3,12 +3,24 @@
 
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { copyFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: 'github-pages-spa-fallback',
+      closeBundle() {
+        const distDir = resolve(__dirname, 'dist')
+        copyFileSync(resolve(distDir, 'index.html'), resolve(distDir, '404.html'))
+      },
+    },
+  ],
   base: '/CoreX/',
   server: {
-    port: 3000,
+    port: 5174,
+    strictPort: false,
     host: true,
     open: true
   },

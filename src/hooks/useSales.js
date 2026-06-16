@@ -637,4 +637,5 @@ const useSales = () => {
   };
 };
 
+export { useSales };
 export default useSales;

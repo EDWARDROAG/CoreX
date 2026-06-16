@@ -625,4 +625,5 @@ const useCategories = () => {
   };
 };
 
+export { useCategories };
 export default useCategories;

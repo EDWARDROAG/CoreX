@@ -589,4 +589,5 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
   };
 };
 
+export { useProducts };
 export default useProducts;

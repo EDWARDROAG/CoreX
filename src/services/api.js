@@ -3,10 +3,11 @@
 
 // frontend/src/services/api.js
 import axios from 'axios';
+import { APP_ENV } from '../config/env';
 
 // Configuración base de la API
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-const API_TIMEOUT = parseInt(process.env.REACT_APP_API_TIMEOUT) || 30000;
+const API_URL = APP_ENV.API_URL;
+const API_TIMEOUT = APP_ENV.API_TIMEOUT;
 
 // Crear instancia de axios
 const api = axios.create({
@@ -53,7 +54,7 @@ api.interceptors.request.use(
     }
     
     // Log de peticiones en desarrollo
-    if (process.env.NODE_ENV === 'development') {
+    if (APP_ENV.isDev) {
       console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`, config.data);
     }
     
@@ -69,7 +70,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     // Log de respuestas en desarrollo
-    if (process.env.NODE_ENV === 'development') {
+    if (APP_ENV.isDev) {
       console.log(`✅ API Response: ${response.config.url}`, response.data);
     }
     return response;
@@ -78,7 +79,7 @@ api.interceptors.response.use(
     const originalRequest = error.config;
     
     // Log de errores
-    if (process.env.NODE_ENV === 'development') {
+    if (APP_ENV.isDev) {
       console.error('❌ API Response Error:', error.response || error);
     }
     

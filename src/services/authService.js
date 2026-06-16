@@ -3,6 +3,7 @@
 
 // frontend/src/services/authService.js
 import api from './api';
+import { APP_ENV } from '../config/env';
 
 // Configuración del servicio de autenticación
 const authService = {
@@ -281,7 +282,7 @@ const authService = {
    * @returns {string}
    */
   getSocialAuthUrl: (provider) => {
-    return `${process.env.REACT_APP_API_URL}/auth/${provider}`;
+    return `${APP_ENV.API_URL}/auth/${provider}`;
   },
 
   /**
