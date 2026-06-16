@@ -57,9 +57,12 @@
 /*                                                                            */
 /* ========================================================================== */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useWhatsApp } from '../../hooks/useWhatsApp';
+import PageHero from '../../components/ui/PageHero';
+import { services as homeServices } from '../../data/homeContent';
+import { getWhatsAppLink } from '../../utils/whatsappHelper';
 
 /* ========================================================================== */
 /*  DATOS DE SERVICIOS DE MANTENIMIENTO                                       */
@@ -250,52 +253,12 @@ const MAINTENANCE_SERVICES = {
 
 const MaintenancePage = () => {
   const { type } = useParams();
-  const { generateServiceInquiryLink, getDefaultWhatsAppNumber } = useWhatsApp();
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    device: '',
-    issue: ''
-  });
-  const [formSent, setFormSent] = useState(false);
+  const { generateServiceInquiryLink } = useWhatsApp();
 
-  // Determinar qué servicio mostrar
-  const service = MAINTENANCE_SERVICES[type] || MAINTENANCE_SERVICES.celulares;
-  const isSpecificService = MAINTENANCE_SERVICES[type] !== undefined;
+  const service = type ? MAINTENANCE_SERVICES[type] : null;
+  const isSpecificService = Boolean(type && MAINTENANCE_SERVICES[type]);
 
-  /* ========================================================================= */
-  /*  MANEJAR FORMULARIO                                                        */
-  /* ========================================================================= */
-
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    
-    const message = `📱 *SOLICITUD DE MANTENIMIENTO* 📱\n\n` +
-      `*Servicio:* ${service.title}\n` +
-      `*Cliente:* ${formData.name}\n` +
-      `*Teléfono:* ${formData.phone}\n` +
-      `*Equipo:* ${formData.device}\n` +
-      `*Problema:* ${formData.issue}`;
-    
-    const whatsappLink = `https://wa.me/${getDefaultWhatsAppNumber()}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappLink, '_blank');
-    setFormSent(true);
-    
-    setTimeout(() => {
-      setFormSent(false);
-    }, 3000);
-  };
-
-  /* ========================================================================= */
-  /*  GENERAR ENLACE DE CONSULTA                                               */
-  /* ========================================================================= */
-
-  const handleServiceInquiry = (serviceName) => {
+  const handleServiceInquiry = () => {
     const link = generateServiceInquiryLink(type || 'celulares');
     window.open(link, '_blank');
   };
@@ -304,176 +267,103 @@ const MaintenancePage = () => {
   /*  RENDERIZADO                                                              */
   /* ========================================================================= */
 
+  if (!isSpecificService) {
+    return (
+      <>
+        <PageHero
+          title="Nuestros Servicios"
+          subtitle="Mantenimiento, armado de PCs, consolas y periféricos con estándar profesional CoreX"
+          breadcrumbs={[
+            { label: 'Inicio', to: '/' },
+            { label: 'Servicios' },
+          ]}
+        />
+        <div className="corex-section corex-section-alt">
+          <div className="corex-container">
+            <div className="corex-grid-4">
+              {homeServices.map((item) => (
+                <Link key={item.id} to={item.link} className="corex-service-card group relative block">
+                  {item.background && (
+                    <img src={item.background} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30 transition group-hover:opacity-40" />
+                  )}
+                  <div className="relative flex min-h-[280px] flex-col p-5">
+                    <img src={item.icon} alt={item.title} className="mb-3 h-14 w-14 object-contain" />
+                    <h3 className="corex-display text-xl font-bold" style={{ color: item.accent }}>{item.title}</h3>
+                    <ul className="mt-3 flex-1 space-y-1.5">
+                      {item.bullets.map((bullet) => (
+                        <li key={bullet} className="text-sm text-gray-300">• {bullet}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-10 text-center">
+              <a href={getWhatsAppLink('maintenance')} target="_blank" rel="noopener noreferrer" className="corex-btn-gradient corex-btn-gradient--md">
+                Cotizar servicio
+              </a>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        
-        {/* Breadcrumb */}
-        <div className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-          <Link to="/" className="hover:text-blue-600">Inicio</Link>
-          <span className="mx-2">/</span>
-          <span className="text-gray-700 dark:text-gray-300">{service.title}</span>
-        </div>
+    <>
+      <PageHero
+        title={service.title}
+        subtitle={service.description}
+        breadcrumbs={[
+          { label: 'Inicio', to: '/' },
+          { label: 'Servicios', to: '/maintenance' },
+          { label: service.title },
+        ]}
+      />
 
-        {/* Encabezado */}
-        <div className="text-center mb-12">
-          <div className={`${service.color} w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl`}>
-            {service.icon}
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-4">
-            {service.title}
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            {service.description}
-          </p>
-        </div>
-
-        {/* Grid de servicios */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {service.services.map((item, index) => (
-            <div
-              key={index}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition p-6"
-            >
-              <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
-                {item.name}
-              </h3>
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-3">
-                {item.price}
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                {item.description}
-              </p>
-              <ul className="space-y-2 mb-6">
-                {item.features.map((feature, idx) => (
-                  <li key={idx} className="text-sm text-gray-500 dark:text-gray-400 flex items-start gap-2">
-                    <span className="text-green-500">✓</span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => handleServiceInquiry(item.name)}
-                className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-center"
-              >
-                Consultar por WhatsApp
-              </button>
-            </div>
-          ))}
-        </div>
-
-        {/* Beneficios adicionales */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8 mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white text-center mb-8">
-            ¿Por qué elegirnos?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="text-4xl mb-3">🔧</div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                Técnicos Especializados
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Personal capacitado y con experiencia
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl mb-3">✅</div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                Garantía Garantizada
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Todos los servicios tienen garantía
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl mb-3">⚡</div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                Servicio Rápido
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Entregas en el menor tiempo posible
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Formulario de contacto */}
-        {!isSpecificService && (
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-lg p-8 text-white">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold mb-2">
-                ¿Necesitas una cotización personalizada?
-              </h2>
-              <p className="opacity-90">
-                Déjanos tus datos y te contactaremos a la brevedad
-              </p>
-            </div>
-            
-            {formSent ? (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-3">✅</div>
-                <p className="text-lg font-semibold">¡Solicitud enviada!</p>
-                <p className="opacity-80">Te contactaremos por WhatsApp en breve</p>
-              </div>
-            ) : (
-              <form onSubmit={handleFormSubmit} className="max-w-lg mx-auto">
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Tu nombre"
-                    value={formData.name}
-                    onChange={handleFormChange}
-                    className="w-full px-4 py-2 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <input
-                    type="tel"
-                    name="phone"
-                    placeholder="Tu teléfono"
-                    value={formData.phone}
-                    onChange={handleFormChange}
-                    className="w-full px-4 py-2 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    name="device"
-                    placeholder="Tipo de equipo"
-                    value={formData.device}
-                    onChange={handleFormChange}
-                    className="w-full px-4 py-2 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
-                    required
-                  />
-                </div>
-                <div className="mb-6">
-                  <textarea
-                    name="issue"
-                    placeholder="Describe el problema"
-                    value={formData.issue}
-                    onChange={handleFormChange}
-                    rows="3"
-                    className="w-full px-4 py-2 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
-                    required
-                  ></textarea>
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
-                >
-                  Enviar por WhatsApp
+      <div className="corex-section corex-section-alt">
+        <div className="corex-container">
+          <div className="corex-grid-4">
+            {service.services.map((item, index) => (
+              <div key={index} className="corex-card flex h-full flex-col p-6">
+                <h3 className="text-lg font-bold text-gray-900">{item.name}</h3>
+                <p className="corex-price mt-2 text-xl">{item.price}</p>
+                <p className="mt-3 text-sm text-gray-600">{item.description}</p>
+                <ul className="my-4 flex-1 space-y-2">
+                  {item.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-500">
+                      <span className="text-emerald-500">✓</span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <button type="button" onClick={handleServiceInquiry} className="corex-btn-gradient corex-btn-gradient--sm w-full">
+                  Consultar por WhatsApp
                 </button>
-              </form>
-            )}
+              </div>
+            ))}
           </div>
-        )}
+
+          <div className="corex-card mt-10 p-8">
+            <h2 className="corex-section-title mb-8 text-center">¿Por qué elegirnos?</h2>
+            <div className="corex-grid-4">
+              {[
+                { icon: '🔧', title: 'Técnicos Especializados', desc: 'Personal capacitado y con experiencia' },
+                { icon: '✅', title: 'Garantía Garantizada', desc: 'Todos los servicios tienen garantía' },
+                { icon: '⚡', title: 'Servicio Rápido', desc: 'Entregas en el menor tiempo posible' },
+                { icon: '💬', title: 'Soporte Directo', desc: 'Atención por WhatsApp en tiempo real' },
+              ].map((item) => (
+                <div key={item.title} className="text-center">
+                  <div className="mb-3 text-4xl">{item.icon}</div>
+                  <h3 className="font-bold text-gray-900">{item.title}</h3>
+                  <p className="mt-2 text-sm text-gray-500">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

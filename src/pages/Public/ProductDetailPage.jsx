@@ -64,6 +64,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import ProductCard from '../../components/common/ProductCard';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import PageHero from '../../components/ui/PageHero';
+import SectionHeader from '../../components/ui/SectionHeader';
 import { useProducts } from '../../hooks/useProducts';
 import { useWhatsApp } from '../../hooks/useWhatsApp';
 
@@ -181,143 +183,87 @@ const ProductDetailPage = () => {
 
   if (isLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="corex-section flex min-h-[50vh] items-center justify-center">
         <LoadingSpinner />
       </div>
     );
   }
 
-  /* ========================================================================= */
-  /*  RENDERIZADO PRINCIPAL                                                    */
-  /* ========================================================================= */
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        
-        {/* Breadcrumb */}
-        <div className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-          <Link to="/" className="hover:text-blue-600">Inicio</Link>
-          <span className="mx-2">/</span>
-          <Link to="/products" className="hover:text-blue-600">Productos</Link>
-          <span className="mx-2">/</span>
-          <span className="text-gray-700 dark:text-gray-300">{product?.nombre}</span>
-        </div>
+    <>
+      <PageHero
+        title={product?.nombre || 'Producto'}
+        subtitle={product?.categoria_nombre}
+        breadcrumbs={[
+          { label: 'Inicio', to: '/' },
+          { label: 'Productos', to: '/products' },
+          { label: product?.nombre || 'Detalle' },
+        ]}
+      />
 
-        {/* Detalle del producto */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
-            
-            {/* Imagen del producto */}
-            <div className="flex justify-center items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
-              {product?.imagen_url ? (
-                <img
-                  src={product.imagen_url}
-                  alt={product.nombre}
-                  className="max-w-full max-h-96 object-contain rounded-lg"
-                  onError={(e) => {
-                    e.target.src = '/placeholder-image.png';
-                  }}
-                />
-              ) : (
-                <div className="w-full h-64 flex items-center justify-center text-gray-400">
-                  <div className="text-center">
-                    <div className="text-6xl mb-2">📦</div>
-                    <p>Sin imagen</p>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            {/* Información del producto */}
-            <div>
-              {/* Condición */}
-              <div className="mb-4">
-                {product?.condicion === 'nuevo' ? (
-                  <span className="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
-                    🆕 Nuevo
-                  </span>
+      <div className="corex-section corex-section-alt">
+        <div className="corex-container">
+          <div className="corex-card overflow-hidden">
+            <div className="grid grid-cols-1 gap-8 p-6 md:grid-cols-2 md:p-8">
+              <div className="flex items-center justify-center rounded-lg bg-gray-50 p-4">
+                {product?.imagen_url ? (
+                  <img
+                    src={product.imagen_url}
+                    alt={product.nombre}
+                    className="max-h-96 max-w-full rounded-lg object-contain"
+                    onError={(e) => { e.target.src = '/placeholder-image.png'; }}
+                  />
                 ) : (
-                  <span className="inline-block bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1 rounded-full">
-                    🔄 Segunda Mano
-                  </span>
+                  <div className="flex h-64 w-full items-center justify-center text-gray-400">Sin imagen</div>
                 )}
               </div>
-              
-              {/* Nombre */}
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-4">
-                {product?.nombre}
-              </h1>
-              
-              {/* Categoría */}
-              {product?.categoria_nombre && (
-                <div className="mb-4">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    Categoría: {product.categoria_nombre}
-                  </span>
-                </div>
-              )}
-              
-              {/* Precio */}
-              <div className="mb-6">
-                <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                  ${product?.precio?.toLocaleString('es-CO')}
-                </span>
-              </div>
-              
-              {/* Descripción */}
-              {product?.descripcion && (
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                    Descripción
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
-                    {product.descripcion}
-                  </p>
-                </div>
-              )}
-              
-              {/* Botones de acción */}
-              <div className="flex flex-col sm:flex-row gap-4 mt-6">
-                <button
-                  onClick={handleQuickBuy}
-                  className="flex-1 bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition flex items-center justify-center gap-2"
-                >
-                  <span>💬</span>
-                  Comprar por WhatsApp
-                </button>
-                <button
-                  onClick={handleInquiry}
-                  className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
-                >
-                  <span>❓</span>
-                  Consultar
-                </button>
-              </div>
-              
-              {/* Nota de disponibilidad */}
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">
-                * Los precios están sujetos a disponibilidad de stock
-              </p>
-            </div>
-          </div>
-        </div>
 
-        {/* Productos relacionados */}
-        {relatedProducts.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
-              Productos Relacionados
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {relatedProducts.map((relProduct) => (
-                <ProductCard key={relProduct.id} product={relProduct} />
-              ))}
+              <div>
+                <div className="mb-4">
+                  {product?.condicion === 'nuevo' ? (
+                    <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Nuevo</span>
+                  ) : (
+                    <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-700">Segunda Mano</span>
+                  )}
+                </div>
+
+                <h1 className="corex-page-title mb-4 normal-case">{product?.nombre}</h1>
+                <p className="corex-price mb-6 text-3xl">${product?.precio?.toLocaleString('es-CO')}</p>
+
+                {product?.descripcion && (
+                  <div className="mb-6">
+                    <h3 className="corex-section-title mb-2 text-lg">Descripción</h3>
+                    <p className="whitespace-pre-wrap text-gray-600">{product.descripcion}</p>
+                  </div>
+                )}
+
+                <div className="mt-6 flex flex-col gap-4 sm:flex-row">
+                  <button type="button" onClick={handleQuickBuy} className="corex-btn-whatsapp flex-1 px-6 py-3">
+                    Comprar por WhatsApp
+                  </button>
+                  <button type="button" onClick={handleInquiry} className="corex-btn-gradient corex-btn-gradient--md flex-1">
+                    Consultar
+                  </button>
+                </div>
+
+                <p className="mt-4 text-center text-xs text-gray-500">* Precios sujetos a disponibilidad de stock</p>
+              </div>
             </div>
           </div>
-        )}
+
+          {relatedProducts.length > 0 && (
+            <div className="mt-12">
+              <SectionHeader title="Productos Relacionados" linkTo="/products" />
+              <div className="corex-grid-4">
+                {relatedProducts.map((relProduct) => (
+                  <ProductCard key={relProduct.id} product={relProduct} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

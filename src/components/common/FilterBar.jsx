@@ -206,73 +206,57 @@ const FilterBar = ({ filters = {}, onFilterChange, onSearch, onClearFilters }) =
   /* ========================================================================= */
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6">
+    <div className="corex-filter-bar">
       <div className="flex flex-wrap items-end gap-4">
-        
-        {/* Búsqueda */}
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Buscar producto
-          </label>
+        <div className="min-w-[200px] flex-1">
+          <label className="corex-label">Buscar producto</label>
           <form onSubmit={handleSearchSubmit} className="relative">
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Nombre del producto..."
-              className="w-full px-4 py-2 pl-10 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="corex-input pl-10"
             />
             <div className="absolute left-3 top-2.5 text-gray-400">🔍</div>
           </form>
         </div>
 
-        {/* Categoría */}
         <div className="w-full sm:w-48">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Categoría
-          </label>
+          <label className="corex-label">Categoría</label>
           <select
             name="categoria_id"
             value={localFilters.categoria_id}
             onChange={handleFilterChange}
-            className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+            className="corex-select"
           >
             {renderCategoryOptions()}
           </select>
         </div>
 
-        {/* Condición */}
         <div className="w-full sm:w-40">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Condición
-          </label>
+          <label className="corex-label">Condición</label>
           <select
             name="condicion"
             value={localFilters.condicion}
             onChange={handleFilterChange}
-            className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
+            className="corex-select"
           >
             {renderConditionOptions()}
           </select>
         </div>
 
-        {/* Botón limpiar */}
         <div className="flex items-center gap-2">
           {activeFiltersCount > 0 && (
-            <button
-              onClick={handleClearFilters}
-              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition flex items-center gap-2"
-            >
-              <span>✕</span>
-              <span>Limpiar ({activeFiltersCount})</span>
+            <button type="button" onClick={handleClearFilters} className="corex-btn-outline">
+              Limpiar ({activeFiltersCount})
             </button>
           )}
         </div>
       </div>
 
-      {/* Filtros activos (badges) */}
       {activeFiltersCount > 0 && (
-        <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-4 flex flex-wrap gap-2 border-t border-gray-200 pt-3">
           {localFilters.categoria_id && (
             <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs">
               📁 {categories.find(c => c.id == localFilters.categoria_id)?.nombre || 'Categoría'}

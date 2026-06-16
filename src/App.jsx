@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
+import WhatsAppFloat from './components/ui/WhatsAppFloat';
 import HomePage from './pages/Public/HomePage';
 import ProductsPage from './pages/Public/ProductsPage';
 import ProductDetailPage from './pages/Public/ProductDetailPage';
@@ -9,12 +10,13 @@ import MaintenancePage from './pages/Public/MaintenancePage';
 import ContactPage from './pages/Public/ContactPage';
 
 const PublicLayout = () => (
-  <div className="flex min-h-screen flex-col">
+  <div className="corex-page flex min-h-screen flex-col">
     <Navbar />
     <main className="flex-1">
       <Outlet />
     </main>
     <Footer />
+    <WhatsAppFloat />
   </div>
 );
 

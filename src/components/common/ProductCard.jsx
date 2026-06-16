@@ -148,65 +148,46 @@ const ProductCard = ({ product }) => {
   /* ========================================================================= */
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition overflow-hidden group">
+    <div className="corex-product-card group">
       <Link to={`/products/${product.id}`}>
-        {/* Imagen */}
-        <div className="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-700">
+        <div className="relative h-48 overflow-hidden bg-gray-50">
           <img
             src={product.imagen_url || '/placeholder-image.png'}
             alt={product.nombre}
-            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
             onError={handleImageError}
           />
           {renderConditionBadge()}
           {renderStockBadge()}
         </div>
 
-        {/* Contenido */}
         <div className="p-4">
-          {/* Nombre */}
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-1 line-clamp-1">
-            {product.nombre}
-          </h3>
-          
-          {/* Categoría */}
+          <h3 className="mb-1 line-clamp-1 text-lg font-semibold text-gray-900">{product.nombre}</h3>
           {product.categoria_nombre && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-              {product.categoria_nombre}
-            </p>
+            <p className="mb-2 text-xs text-gray-500">{product.categoria_nombre}</p>
           )}
-          
-          {/* Precio */}
-          <div className="flex items-baseline gap-1 mb-3">
-            <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {formatPrice(product.precio)}
-            </span>
+          <div className="mb-3">
+            <span className="corex-price text-2xl">{formatPrice(product.precio)}</span>
           </div>
         </div>
       </Link>
 
-      {/* Botones de acción */}
-      <div className="px-4 pb-4 flex gap-2">
+      <div className="flex gap-2 px-4 pb-4">
         {product.stock === 1 ? (
           <>
-            <button
-              onClick={handleQuickBuy}
-              className="flex-1 bg-green-500 text-white py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition"
-            >
-              💬 Comprar
+            <button type="button" onClick={handleQuickBuy} className="corex-btn-whatsapp flex-1 px-3 py-2 text-sm">
+              Comprar
             </button>
             <button
+              type="button"
               onClick={handleInquiry}
-              className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition"
+              className="corex-btn-gradient corex-btn-gradient--sm flex-1"
             >
               Consultar
             </button>
           </>
         ) : (
-          <button
-            disabled
-            className="w-full bg-gray-300 text-gray-500 py-2 rounded-lg text-sm font-semibold cursor-not-allowed"
-          >
+          <button type="button" disabled className="corex-btn-outline w-full cursor-not-allowed">
             Producto Vendido
           </button>
         )}
