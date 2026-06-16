@@ -36,7 +36,11 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 bg-black text-white shadow-lg">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center" onClick={() => setIsMenuOpen(false)}>
-          <img src={IMAGES.logoWhite} alt="CoreX Technologies" className="h-8 w-auto sm:h-9" />
+          <img
+            src={IMAGES.logoWhite}
+            alt="CoreX Technologies"
+            className="h-8 w-auto max-w-[180px] object-contain sm:h-9"
+          />
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex">

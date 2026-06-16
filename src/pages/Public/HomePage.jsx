@@ -7,28 +7,32 @@ import SectionHeader from '../../components/ui/SectionHeader';
 
 const HomePage = () => (
   <div className="corex-page">
-    <section className="relative min-h-[520px] overflow-hidden bg-black sm:min-h-[600px]">
-      <img src={IMAGES.banner} alt="PC Gamer CoreX" className="absolute inset-0 h-full w-full object-cover object-right" />
-      <div className="corex-hero-overlay absolute inset-0" />
-      <div className="corex-container relative flex min-h-[520px] items-center py-16 sm:min-h-[600px]">
-        <div className="max-w-2xl text-white">
-          <h1 className="corex-display text-4xl font-bold uppercase leading-tight sm:text-5xl lg:text-6xl">
+    <section className="corex-hero">
+      <div className="corex-container corex-hero__split">
+        <div className="corex-hero__inner">
+          <h1 className="corex-hero__title">
             Servicio Técnico y Armado de <span className="corex-gradient-text">PCs Gamer</span>
           </h1>
-          <p className="mt-4 text-xs font-semibold tracking-[0.35em] text-gray-300 sm:text-sm">
-            ESTÉTICA • POTENCIA • RENDIMIENTO
-          </p>
-          <p className="mt-4 max-w-lg text-base text-gray-300 sm:text-lg">
+          <p className="corex-hero__tagline">ESTÉTICA • POTENCIA • RENDIMIENTO</p>
+          <p className="corex-hero__description">
             Mantenimiento profesional y armado de equipos personalizados a tu medida.
           </p>
           <a
             href={getWhatsAppLink('general')}
             target="_blank"
             rel="noopener noreferrer"
-            className="corex-btn-gradient corex-btn-gradient--md mt-8"
+            className="corex-btn-gradient corex-btn-gradient--md corex-hero__cta"
           >
             Cotizar ahora <span aria-hidden>→</span>
           </a>
+        </div>
+        <div className="corex-hero__media">
+          <img
+            src={IMAGES.banner}
+            alt="PC Gamer CoreX con iluminación RGB"
+            className="corex-hero__banner-img"
+            fetchPriority="high"
+          />
         </div>
       </div>
     </section>

@@ -4,8 +4,9 @@ export const asset = (path) => `${base}images/${path}`;
 
 export const IMAGES = {
   banner: asset('banher.png'),
-  logoWhite: asset('logo_white.png'),
-  logoBlack: asset('logo_black.png'),
+  // Nota: los archivos del cliente vienen con nombres invertidos respecto al color real del logo
+  logoWhite: asset('logo_black.png'),
+  logoBlack: asset('logo_white.png'),
   favicon: asset('logo_favicon.png'),
   entryPc: asset('entry_pc.png'),
   performancePc: asset('performance_pc.png'),

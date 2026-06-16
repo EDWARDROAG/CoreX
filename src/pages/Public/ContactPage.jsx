@@ -66,25 +66,15 @@ import { getWhatsAppLink } from '../../utils/whatsappHelper';
 /*  DATOS DE CONTACTO                                                         */
 /* ========================================================================== */
 
-const CONTACT_INFO = {
-  phone: '311 561 0825',
-  phoneInternational: '+57 311 561 0825',
-  email: 'corexservice@gmail.com',
-  address: 'Calle 123 #45-67, Centro Comercial Tecnológico, Local 305',
-  city: 'Bogotá, Colombia',
-  schedule: {
-    weekdays: 'Lunes a Viernes: 9:00 AM - 7:00 PM',
-    saturday: 'Sábados: 10:00 AM - 4:00 PM',
-    sunday: 'Domingos: Cerrado'
-  }
-};
+import { SITE_CONTACT, FOOTER_SOCIAL } from '../../data/siteInfo';
 
-const SOCIAL_MEDIA = [
-  { name: 'Facebook', url: 'https://facebook.com/corex', icon: '📘', color: 'bg-blue-700' },
-  { name: 'Instagram', url: 'https://instagram.com/corex', icon: '📷', color: 'bg-pink-600' },
-  { name: 'WhatsApp', url: 'https://wa.me/573115610825', icon: '💬', color: 'bg-green-500' },
-  { name: 'TikTok', url: 'https://tiktok.com/@corex', icon: '🎵', color: 'bg-black' }
-];
+const CONTACT_INFO = SITE_CONTACT;
+
+const SOCIAL_MEDIA = FOOTER_SOCIAL.map((s) => ({
+  ...s,
+  icon: s.name === 'Facebook' ? '📘' : s.name === 'Instagram' ? '📷' : s.name === 'WhatsApp' ? '💬' : '🎵',
+  color: s.name === 'Facebook' ? 'bg-blue-700' : s.name === 'Instagram' ? 'bg-pink-600' : s.name === 'WhatsApp' ? 'bg-green-500' : 'bg-black',
+}));
 
 /* ========================================================================== */
 /*  COMPONENTE PRINCIPAL                                                      */

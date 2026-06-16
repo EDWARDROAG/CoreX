@@ -213,8 +213,207 @@
   .corex-trust-item { flex-direction: column; align-items: center; text-align: center; }
 }
 
-.corex-hero-overlay {
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.55) 45%, rgba(0, 0, 0, 0.15) 100%);
+.corex-hero {
+  background: #000000;
+  overflow: hidden;
+}
+
+.corex-hero__split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 2rem 0;
+}
+
+.corex-hero__media {
+  order: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.corex-hero__banner-img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: min(52vh, 420px);
+  object-fit: contain;
+  object-position: center;
+}
+
+.corex-hero__inner {
+  order: 2;
+  width: 100%;
+  color: #ffffff;
+}
+
+.corex-hero__title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(1.65rem, 4.2vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.08;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.corex-hero__tagline {
+  margin-top: 0.875rem;
+  font-size: clamp(0.625rem, 1.6vw, 0.875rem);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: #d1d5db;
+}
+
+.corex-hero__description {
+  margin-top: 0.875rem;
+  max-width: 36rem;
+  font-size: clamp(0.9rem, 2vw, 1.0625rem);
+  line-height: 1.6;
+  color: #d1d5db;
+}
+
+.corex-hero__cta {
+  display: inline-flex;
+  margin-top: 1.5rem;
+  width: 100%;
+  justify-content: center;
+}
+
+@media (min-width: 480px) {
+  .corex-hero__cta {
+    width: auto;
+    justify-content: flex-start;
+  }
+}
+
+@media (min-width: 768px) {
+  .corex-hero__split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 2rem;
+    padding: 2.5rem 0;
+  }
+
+  .corex-hero__inner {
+    order: 1;
+  }
+
+  .corex-hero__media {
+    order: 2;
+  }
+
+  .corex-hero__banner-img {
+    max-height: min(58vh, 480px);
+    object-position: right center;
+  }
+}
+
+@media (min-width: 1024px) {
+  .corex-hero__split {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 2.5rem;
+    padding: 3rem 0;
+  }
+
+  .corex-hero__banner-img {
+    max-height: 520px;
+  }
+}
+
+/* Footer */
+.corex-footer-brand {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 2.5rem 0;
+}
+
+@media (min-width: 768px) {
+  .corex-footer-brand {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.corex-footer-brand__image {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.corex-footer-brand__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .corex-footer-brand__content {
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+.corex-footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .corex-footer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem;
+  }
+}
+
+.corex-footer-map {
+  display: block;
+  margin-top: 1rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.corex-footer-map:hover {
+  border-color: rgba(168, 85, 247, 0.5);
+  transform: translateY(-1px);
+}
+
+.corex-footer-map iframe {
+  display: block;
+  width: 100%;
+  height: 7.5rem;
+  border: 0;
+  pointer-events: none;
+}
+
+.corex-whatsapp-float {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 50;
+  display: flex;
+  height: 3.5rem;
+  width: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #25d366;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.45);
+  transition: transform 0.2s, background 0.2s;
+}
+
+.corex-whatsapp-float:hover {
+  transform: scale(1.05);
+  background: #1ebe57;
 }
 
 .corex-page-hero { background: #000000; color: #ffffff; padding: 3rem 0; }
@@ -236,26 +435,6 @@
 .corex-link { font-size: 0.875rem; font-weight: 600; color: #6b7280; transition: color 0.2s; }
 .corex-link:hover { color: #7c3aed; }
 .corex-price { font-weight: 700; color: #7c3aed; }
-
-.corex-whatsapp-float {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 1.5rem;
-  z-index: 50;
-  display: flex;
-  height: 3.5rem;
-  width: 3.5rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  background: #22c55e;
-  color: #ffffff;
-  font-size: 1.5rem;
-  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.45);
-  transition: transform 0.2s, background 0.2s;
-}
-
-.corex-whatsapp-float:hover { transform: scale(1.05); background: #16a34a; }
 
 .corex-empty-state {
   padding: 3rem 1.5rem;
