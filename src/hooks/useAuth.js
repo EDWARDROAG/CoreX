@@ -4,6 +4,7 @@
 // frontend/src/hooks/useAuth.js
 import { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
+import { APP_ENV } from '../config/env';
 
 // Hook personalizado para autenticación
 const useAuth = () => {
@@ -29,6 +30,14 @@ const useAuth = () => {
   // Verificar token al iniciar
   useEffect(() => {
     const verifyToken = async () => {
+      if (APP_ENV.isVitrina) {
+        setAuthToken(null);
+        setUser(null);
+        setIsAuthenticated(false);
+        setLoading(false);
+        return;
+      }
+
       const storedToken = localStorage.getItem('token');
       
       if (storedToken) {

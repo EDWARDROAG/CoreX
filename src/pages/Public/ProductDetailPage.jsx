@@ -68,6 +68,7 @@ import PageHero from '../../components/ui/PageHero';
 import SectionHeader from '../../components/ui/SectionHeader';
 import { useProducts } from '../../hooks/useProducts';
 import { useWhatsApp } from '../../hooks/useWhatsApp';
+import { APP_ENV } from '../../config/env';
 
 /* ========================================================================== */
 /*  COMPONENTE PRINCIPAL                                                      */
@@ -89,6 +90,11 @@ const ProductDetailPage = () => {
   /* ========================================================================= */
 
   useEffect(() => {
+    if (APP_ENV.isVitrina) {
+      navigate('/products', { replace: true });
+      return;
+    }
+
     const loadProduct = async () => {
       setIsLoading(true);
       setNotFound(false);
@@ -127,7 +133,7 @@ const ProductDetailPage = () => {
     if (id) {
       loadProduct();
     }
-  }, [id, getProductById, getProducts]);
+  }, [id, getProductById, getProducts, navigate]);
 
   /* ========================================================================= */
   /*  MANEJAR COMPRA RÁPIDA                                                    */

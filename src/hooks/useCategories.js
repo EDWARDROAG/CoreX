@@ -4,6 +4,7 @@
 // frontend/src/hooks/useCategories.js
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import api, { extractList } from '../services/api';
+import { APP_ENV } from '../config/env';
 
 const useCategories = () => {
   // Estados principales
@@ -54,6 +55,13 @@ const useCategories = () => {
 
   // Fetch categorías desde API
   const fetchCategories = useCallback(async () => {
+    if (APP_ENV.isVitrina) {
+      setLoading(false);
+      setError(null);
+      setCategories([]);
+      return [];
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -91,6 +99,10 @@ const useCategories = () => {
   }, [filters, pagination.currentPage, pagination.itemsPerPage]);
 
   const getCategories = useCallback(async () => {
+    if (APP_ENV.isVitrina) {
+      return [];
+    }
+
     try {
       const response = await api.get('/categories');
       return extractList(response.data, 'categories');

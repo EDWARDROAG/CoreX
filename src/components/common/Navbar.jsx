@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { IMAGES } from '../../utils/assets';
+import { APP_ENV } from '../../config/env';
 
 const navItems = [
   { path: '/', label: 'Inicio', end: true },
@@ -66,9 +67,11 @@ const Navbar = () => {
           <button type="button" className="hidden text-gray-300 transition hover:text-white sm:block" aria-label="Buscar">
             <IconSearch />
           </button>
-          <Link to="/login" className="hidden text-gray-300 transition hover:text-white sm:block" aria-label="Cuenta">
-            <IconUser />
-          </Link>
+          {!APP_ENV.isVitrina && (
+            <Link to="/login" className="hidden text-gray-300 transition hover:text-white sm:block" aria-label="Cuenta">
+              <IconUser />
+            </Link>
+          )}
           <button type="button" className="hidden text-gray-300 transition hover:text-white sm:block" aria-label="Carrito">
             <IconCart />
           </button>

@@ -1,11 +1,16 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { APP_ENV } from '../../config/env';
 import LoadingSpinner from '../common/LoadingSpinner';
 import Sidebar from '../common/Sidebar';
 
 const ProtectedRoute = ({ allowedRoles }) => {
   const { isAuthenticated, loading, user } = useAuth();
+
+  if (APP_ENV.isVitrina) {
+    return <Navigate to="/" replace />;
+  }
 
   if (loading) {
     return (

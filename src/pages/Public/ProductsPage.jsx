@@ -68,6 +68,8 @@ import Pagination from '../../components/common/Pagination';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import PageHero from '../../components/ui/PageHero';
 import { useProducts } from '../../hooks/useProducts';
+import { APP_ENV } from '../../config/env';
+import { getWhatsAppLink } from '../../utils/whatsappHelper';
 
 /* ========================================================================== */
 /*  CONFIGURACIÓN                                                             */
@@ -219,11 +221,28 @@ const ProductsPage = () => {
             </div>
           ) : products.length === 0 ? (
             <div className="corex-empty-state">
-              <h3 className="corex-section-title text-xl">No se encontraron productos</h3>
-              <p className="corex-page-subtitle">Intenta con otros filtros o realiza una nueva búsqueda</p>
-              <button type="button" onClick={handleClearFilters} className="corex-btn-gradient corex-btn-gradient--sm mt-6">
-                Limpiar filtros
-              </button>
+              <h3 className="corex-section-title text-xl">
+                {APP_ENV.isVitrina ? 'Catálogo en actualización' : 'No se encontraron productos'}
+              </h3>
+              <p className="corex-page-subtitle">
+                {APP_ENV.isVitrina
+                  ? 'Estamos preparando el inventario en línea. Mientras tanto, contáctanos para cotizar.'
+                  : 'Intenta con otros filtros o realiza una nueva búsqueda'}
+              </p>
+              {APP_ENV.isVitrina ? (
+                <a
+                  href={getWhatsAppLink('general')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="corex-btn-gradient corex-btn-gradient--sm mt-6 inline-block"
+                >
+                  Cotizar por WhatsApp
+                </a>
+              ) : (
+                <button type="button" onClick={handleClearFilters} className="corex-btn-gradient corex-btn-gradient--sm mt-6">
+                  Limpiar filtros
+                </button>
+              )}
             </div>
           ) : (
             <>

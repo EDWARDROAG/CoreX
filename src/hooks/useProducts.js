@@ -5,6 +5,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import api, { extractList, extractData } from '../services/api';
 import { currencyFormatter } from '../utils/formatters';
+import { APP_ENV } from '../config/env';
 
 const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
   // Estados principales
@@ -72,6 +73,13 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
 
   // Fetch productos desde API
   const fetchProducts = useCallback(async (params = {}) => {
+    if (APP_ENV.isVitrina) {
+      setLoading(false);
+      setError(null);
+      setProducts([]);
+      return [];
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -220,6 +228,10 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
 
   // Obtener producto por ID
   const getProductById = useCallback(async (id) => {
+    if (APP_ENV.isVitrina) {
+      return null;
+    }
+
     try {
       setError(null);
       
@@ -514,6 +526,9 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
   }, []);
 
   const getProducts = useCallback(async (params = {}) => {
+    if (APP_ENV.isVitrina) {
+      return { data: [], pagination: { page: 1, totalPages: 1, total: 0 } };
+    }
     const productsData = await fetchProducts(params);
     return { data: productsData };
   }, [fetchProducts]);

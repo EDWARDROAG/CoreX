@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { IMAGES } from '../../utils/assets';
+import { APP_ENV } from '../../config/env';
+import { getWhatsAppLink } from '../../utils/whatsappHelper';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -24,12 +26,51 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (APP_ENV.isVitrina) return;
     clearError();
     const result = await login(email, password, rememberMe);
     if (result.success) {
       navigate(result.user.role === 'admin' ? '/admin/dashboard' : '/cajero/pos', { replace: true });
     }
   };
+
+  if (APP_ENV.isVitrina) {
+    return (
+      <div className="corex-page flex min-h-screen flex-col bg-gray-50">
+        <header className="border-b border-gray-200 bg-black px-4 py-4">
+          <div className="corex-container flex items-center justify-between">
+            <Link to="/">
+              <img src={IMAGES.logoWhite} alt="CoreX" className="h-8 w-auto" />
+            </Link>
+            <Link to="/" className="text-sm text-gray-300 transition hover:text-white">
+              Volver al sitio
+            </Link>
+          </div>
+        </header>
+        <main className="flex flex-1 items-center justify-center px-4 py-12">
+          <div className="corex-card w-full max-w-md p-8 text-center shadow-lg">
+            <h1 className="corex-display text-2xl font-bold text-gray-900">Panel en preparación</h1>
+            <p className="mt-4 text-gray-600">
+              El acceso administrativo estará disponible cuando el sistema completo esté en producción.
+            </p>
+            <div className="mt-8 flex flex-col gap-3">
+              <Link to="/" className="corex-btn-gradient corex-btn-gradient--md">
+                Volver al inicio
+              </Link>
+              <a
+                href={getWhatsAppLink('general')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-blue-600 hover:underline"
+              >
+                Cotizar por WhatsApp
+              </a>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="corex-page flex min-h-screen flex-col bg-gray-50">
