@@ -130,6 +130,7 @@ const useAuth = () => {
       setUser(null);
       setIsAuthenticated(false);
       setError(null);
+      localStorage.removeItem('user');
       setLoading(false);
     }
   }, [token, setAuthToken]);

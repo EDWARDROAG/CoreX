@@ -58,10 +58,11 @@
 /*                                                                            */
 /* ========================================================================== */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useProducts } from '../../hooks/useProducts';
 import { useCategories } from '../../hooks/useCategories';
+import { getMediaUrl } from '../../utils/media';
 import LoadingSpinner from '../common/LoadingSpinner';
 import ErrorAlert from '../common/ErrorAlert';
 
@@ -72,8 +73,9 @@ import ErrorAlert from '../common/ErrorAlert';
 const ProductForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { createProduct, updateProduct, getProductById, loading } = useProducts();
+  const { createProduct, updateProduct, getProductById } = useProducts();
   const { getCategories } = useCategories();
+  const fileInputRef = useRef(null);
   
   const [formData, setFormData] = useState({
     nombre: '',
@@ -86,6 +88,7 @@ const ProductForm = () => {
   
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -119,8 +122,10 @@ const ProductForm = () => {
               destacado: product.destacado || false
             });
             if (product.imagen_url) {
-              setImagePreview(product.imagen_url);
+              setImagePreview(getMediaUrl(product.imagen_url));
             }
+          } else {
+            setServerError('No se pudo cargar el producto');
           }
         }
       } catch (err) {
@@ -132,7 +137,7 @@ const ProductForm = () => {
     };
     
     loadData();
-  }, [id, isEditing, getCategories, getProductById]);
+  }, [id, isEditing]);
 
   /* ========================================================================= */
   /*  MANEJAR CAMBIOS EN FORMULARIO                                            */
@@ -155,32 +160,65 @@ const ProductForm = () => {
   /*  MANEJAR SUBIDA DE IMAGEN                                                 */
   /* ========================================================================= */
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Validar tipo
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-      if (!allowedTypes.includes(file.type)) {
-        setErrors(prev => ({ ...prev, imagen: 'Formato no permitido. Use JPG, PNG o WEBP' }));
-        return;
-      }
-      
-      // Validar tamaño (5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({ ...prev, imagen: 'El archivo es demasiado grande. Máximo 5MB' }));
-        return;
-      }
-      
-      setImageFile(file);
-      setErrors(prev => ({ ...prev, imagen: '' }));
-      
-      // Crear preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
+  };
+
+  const processImageFile = (file) => {
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setErrors(prev => ({ ...prev, imagen: 'Formato no permitido. Use JPG, PNG o WEBP' }));
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setErrors(prev => ({ ...prev, imagen: 'El archivo es demasiado grande. Máximo 5MB' }));
+      return;
+    }
+
+    setImageFile(file);
+    setErrors(prev => ({ ...prev, imagen: '' }));
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageChange = (e) => {
+    processImageFile(e.target.files?.[0]);
+    e.target.value = '';
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingImage(false);
+    processImageFile(e.dataTransfer.files?.[0]);
   };
 
   /* ========================================================================= */
@@ -241,10 +279,16 @@ const ProductForm = () => {
         submitData.append('imagen', imageFile);
       }
       
+      let result;
       if (isEditing) {
-        await updateProduct(id, submitData);
+        result = await updateProduct(id, submitData);
       } else {
-        await createProduct(submitData);
+        result = await createProduct(submitData);
+      }
+
+      if (!result?.success) {
+        setServerError(result?.error || 'Error al guardar el producto');
+        return;
       }
       
       navigate('/admin/products');
@@ -414,51 +458,83 @@ const ProductForm = () => {
 
           {/* Imagen */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <p className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Imagen del producto {!isEditing && '*'}
-            </label>
+            </p>
             
-            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600">
+            <div
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              className={`relative mt-1 flex min-h-[12rem] flex-col items-center justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg transition-colors ${
+                isDraggingImage
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                  : 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/30'
+              }`}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
+                onChange={handleImageChange}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                className={
+                  imagePreview
+                    ? 'hidden'
+                    : 'absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0'
+                }
+                id="product-image-input"
+                aria-label="Seleccionar imagen del producto"
+              />
+
               {imagePreview ? (
                 <div className="text-center">
                   <img
                     src={imagePreview}
                     alt="Vista previa"
-                    className="mx-auto h-32 w-32 object-cover rounded-lg"
+                    className="mx-auto h-32 w-32 object-cover rounded-lg bg-gray-100"
+                    onError={() => setImagePreview('')}
                   />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setImageFile(null);
-                      setImagePreview('');
-                    }}
-                    className="mt-2 text-sm text-red-600 hover:text-red-800"
-                  >
-                    Eliminar imagen
-                  </button>
+                  <div className="mt-4 flex flex-wrap justify-center gap-3">
+                    <label
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => fileInputRef.current?.click()}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          fileInputRef.current?.click();
+                        }
+                      }}
+                      className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                    >
+                      Cambiar imagen
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="rounded-lg border border-red-300 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      Eliminar imagen
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <div className="text-center">
+                <div className="pointer-events-none relative z-10 text-center">
                   <div className="text-4xl mb-2">📸</div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Arrastra y suelta una imagen, o haz clic para seleccionar
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
                     JPG, PNG o WEBP (máx. 5MB)
                   </p>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    onChange={handleImageChange}
-                    className="hidden"
-                    id="image-upload"
-                  />
-                  <label
-                    htmlFor="image-upload"
-                    className="mt-3 inline-block px-4 py-2 bg-blue-600 text-white text-sm rounded-lg cursor-pointer hover:bg-blue-700"
-                  >
+                  <span className="mt-3 inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white">
                     Seleccionar imagen
-                  </label>
+                  </span>
                 </div>
               )}
             </div>

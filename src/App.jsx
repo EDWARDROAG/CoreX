@@ -12,6 +12,7 @@ import ContactPage from './pages/Public/ContactPage';
 import LoginPage from './pages/Public/LoginPage';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import AdminProducts from './pages/Admin/AdminProducts';
+import ProductForm from './components/admin/ProductForm';
 import AdminCategories from './pages/Admin/AdminCategories';
 import AdminUsers from './pages/Admin/AdminUsers';
 import AdminSales from './pages/Admin/AdminSales';
@@ -57,6 +58,8 @@ function App() {
           <Route element={<DashboardLayout />}>
             <Route path="admin/dashboard" element={<AdminDashboard />} />
             <Route path="admin/products" element={<AdminProducts />} />
+            <Route path="admin/products/new" element={<ProductForm />} />
+            <Route path="admin/products/edit/:id" element={<ProductForm />} />
             <Route path="admin/categories" element={<AdminCategories />} />
             <Route path="admin/users" element={<AdminUsers />} />
             <Route path="admin/sales" element={<AdminSales />} />

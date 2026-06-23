@@ -61,13 +61,23 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
-/* ========================================================================== */
-/*  COMPONENTE PRINCIPAL                                                      */
-/* ========================================================================== */
-
 const Sidebar = ({ isOpen, onToggle, isMobile = false }) => {
-  const { userRole } = useAuth();
+  const { user, userRole, userName, logout } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+    } finally {
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+  };
+
+  const displayName = userName || user?.nombre || 'Usuario';
+  const userInitial = displayName.charAt(0).toUpperCase();
 
   /* ========================================================================= */
   /*  MANEJAR COLAPSO                                                          */
@@ -177,11 +187,11 @@ const Sidebar = ({ isOpen, onToggle, isMobile = false }) => {
       <div className="mb-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center text-lg font-bold">
-            {JSON.parse(localStorage.getItem('user'))?.nombre?.charAt(0).toUpperCase() || 'U'}
+            {userInitial}
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-medium text-gray-800 dark:text-white truncate">
-              {JSON.parse(localStorage.getItem('user'))?.nombre || 'Usuario'}
+              {displayName}
             </p>
             <p className="text-xs text-gray-500 truncate">
               {userRole === 'admin' ? 'Administrador' : 'Cajero'}
@@ -199,23 +209,52 @@ const Sidebar = ({ isOpen, onToggle, isMobile = false }) => {
   const renderFooter = () => {
     if (isCollapsed) {
       return (
-        <div className="flex justify-center pt-4 border-t border-gray-200 dark:border-gray-700">
-          <button
-            onClick={handleToggleCollapse}
-            className="p-2 text-gray-500 hover:text-blue-600 transition"
-            title="Expandir"
-          >
-            ▶
-          </button>
+        <div className="space-y-2 border-t border-gray-200 pt-4 dark:border-gray-700">
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="p-2 text-red-500 transition hover:text-red-700 disabled:opacity-50"
+              title="Cerrar sesión"
+            >
+              🚪
+            </button>
+          </div>
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={handleToggleCollapse}
+              className="p-2 text-gray-500 transition hover:text-blue-600"
+              title="Expandir"
+            >
+              ▶
+            </button>
+          </div>
         </div>
       );
     }
 
     return (
-      <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="space-y-2 border-t border-gray-200 pt-4 dark:border-gray-700">
+        <NavLink
+          to="/"
+          className="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm text-gray-600 transition hover:bg-gray-100 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
+        >
+          🌐 Ir al sitio público
+        </NavLink>
         <button
+          type="button"
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm text-red-600 transition hover:bg-red-50 disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-900/20"
+        >
+          {isLoggingOut ? 'Saliendo...' : '🚪 Cerrar sesión'}
+        </button>
+        <button
+          type="button"
           onClick={handleToggleCollapse}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-gray-500 hover:text-blue-600 transition"
+          className="flex w-full items-center justify-center gap-2 px-4 py-2 text-sm text-gray-500 transition hover:text-blue-600"
         >
           ◀ Colapsar menú
         </button>
@@ -248,7 +287,9 @@ const Sidebar = ({ isOpen, onToggle, isMobile = false }) => {
         </nav>
       </div>
       
-      {renderFooter()}
+      <div className="p-4">
+        {renderFooter()}
+      </div>
     </aside>
   );
 };

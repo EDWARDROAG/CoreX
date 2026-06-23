@@ -58,6 +58,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useWhatsApp } from '../../hooks/useWhatsApp';
+import { getMediaUrl } from '../../utils/media';
 
 /* ========================================================================== */
 /*  COMPONENTE PRINCIPAL                                                      */
@@ -105,8 +106,14 @@ const ProductCard = ({ product }) => {
   /*  IMAGEN FALLBACK                                                          */
   /* ========================================================================= */
 
+  const imageSrc = getMediaUrl(product.imagen_url);
+
   const handleImageError = (e) => {
-    e.target.src = '/placeholder-image.png';
+    e.target.onerror = null;
+    e.target.style.display = 'none';
+    e.target.parentElement?.classList.add('flex', 'items-center', 'justify-center');
+    const placeholder = e.target.parentElement?.querySelector('[data-placeholder]');
+    if (placeholder) placeholder.style.display = 'flex';
   };
 
   /* ========================================================================= */
@@ -150,13 +157,22 @@ const ProductCard = ({ product }) => {
   return (
     <div className="corex-product-card group">
       <Link to={`/products/${product.id}`}>
-        <div className="relative h-48 overflow-hidden bg-gray-50">
-          <img
-            src={product.imagen_url || '/placeholder-image.png'}
-            alt={product.nombre}
-            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-            onError={handleImageError}
-          />
+        <div className="relative h-48 overflow-hidden bg-gray-100">
+          {imageSrc ? (
+            <img
+              src={imageSrc}
+              alt={product.nombre}
+              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              onError={handleImageError}
+            />
+          ) : null}
+          <div
+            data-placeholder
+            className={`absolute inset-0 items-center justify-center text-4xl text-gray-300 ${imageSrc ? 'hidden' : 'flex'}`}
+            aria-hidden="true"
+          >
+            📦
+          </div>
           {renderConditionBadge()}
           {renderStockBadge()}
         </div>

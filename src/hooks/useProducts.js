@@ -3,7 +3,7 @@
 
 // frontend/src/hooks/useProducts.js
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import api, { extractList } from '../services/api';
+import api, { extractList, extractData } from '../services/api';
 import { currencyFormatter } from '../utils/formatters';
 
 const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
@@ -221,25 +221,17 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
   // Obtener producto por ID
   const getProductById = useCallback(async (id) => {
     try {
-      setLoading(true);
       setError(null);
       
       const response = await api.get(`/products/${id}`);
-      const product = response.data;
+      const product = extractData(response.data);
       setSelectedProduct(product);
-      
-      // Cargar productos relacionados
-      if (product.category) {
-        await fetchRelatedProducts(product.category, product.id);
-      }
       
       return product;
     } catch (err) {
       console.error('Error fetching product:', err);
       setError(err.response?.data?.message || 'Error al cargar el producto');
       return null;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -392,10 +384,11 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
       setError(null);
       
       const response = await api.post('/products', productData);
-      const newProduct = response.data;
+      const newProduct = extractData(response.data);
       
-      // Actualizar lista de productos
-      setProducts(prev => [newProduct, ...prev]);
+      if (newProduct) {
+        setProducts(prev => [newProduct, ...prev]);
+      }
       
       return { success: true, product: newProduct };
     } catch (err) {
@@ -414,16 +407,16 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
       setError(null);
       
       const response = await api.put(`/products/${id}`, productData);
-      const updatedProduct = response.data;
+      const updatedProduct = extractData(response.data);
       
-      // Actualizar en la lista de productos
-      setProducts(prev => prev.map(p => 
-        p.id === id ? updatedProduct : p
-      ));
-      
-      // Actualizar producto seleccionado si es el mismo
-      if (selectedProduct?.id === id) {
-        setSelectedProduct(updatedProduct);
+      if (updatedProduct) {
+        setProducts(prev => prev.map(p => 
+          p.id === id ? updatedProduct : p
+        ));
+        
+        if (selectedProduct?.id === id) {
+          setSelectedProduct(updatedProduct);
+        }
       }
       
       return { success: true, product: updatedProduct };

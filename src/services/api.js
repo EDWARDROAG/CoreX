@@ -300,8 +300,17 @@ const extractList = (payload, key) => {
   return [];
 };
 
+const extractData = (payload) => {
+  if (!payload) return null;
+  if (payload.data !== undefined && payload.success !== undefined) {
+    return payload.data;
+  }
+  return payload;
+};
+
 export {
   extractList,
+  extractData,
   uploadFile,
   downloadFile,
   cancelRequest,

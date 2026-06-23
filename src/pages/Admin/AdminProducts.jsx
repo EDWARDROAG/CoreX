@@ -65,7 +65,7 @@ import { Link } from 'react-router-dom';
 import { useProducts } from '../../hooks/useProducts';
 import { useCategories } from '../../hooks/useCategories';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import ProductForm from '../../components/admin/ProductForm';
+import { getMediaUrl } from '../../utils/media';
 
 /* ========================================================================== */
 /*  CONFIGURACIÓN                                                             */
@@ -283,10 +283,14 @@ const AdminProducts = () => {
       <tr key={product.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
         <td className="px-4 py-3">
           <img 
-            src={product.imagen_url || '/placeholder-image.png'} 
+            src={getMediaUrl(product.imagen_url) || undefined}
             alt={product.nombre}
-            className="w-12 h-12 object-cover rounded"
-            onError={(e) => { e.target.src = '/placeholder-image.png'; }}
+            className="w-12 h-12 object-cover rounded bg-gray-100"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '';
+              e.target.classList.add('opacity-40');
+            }}
           />
         </td>
         <td className="px-4 py-3">
