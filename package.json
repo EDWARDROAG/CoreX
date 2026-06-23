@@ -1,9 +1,9 @@
 {
-  "name": "coreX",
+  "name": "CoreX",
   "version": "1.0.0",
   "type": "module",
-  "description": "Frontend para Corex - Plataforma de comercio electrónico moderna",
-  "author": "Corex Team",
+  "description": "Frontend CoreX - Plataforma de ventas y servicios técnicos",
+  "author": "CoreX Team",
   "license": "MIT",
   "private": true,
   "repository": {
@@ -39,8 +39,8 @@
     ]
   },
   "scripts": {
-    "dev": "vite",
-    "start": "vite",
+    "dev": "vite --port 5506",
+    "start": "vite --port 5506",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "build:staging": "vite build --mode staging",

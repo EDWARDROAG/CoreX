@@ -31,7 +31,7 @@ const HomePage = () => (
             src={IMAGES.banner}
             alt="PC Gamer CoreX con iluminación RGB"
             className="corex-hero__banner-img"
-            fetchPriority="high"
+            fetchpriority="high"
           />
         </div>
       </div>

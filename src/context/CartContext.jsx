@@ -2,6 +2,7 @@
 
 // frontend/src/context/CartContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { currencyFormatter } from '../utils/formatters';
 
 // Crear el contexto
 const CartContext = createContext({});
@@ -180,12 +181,7 @@ export const CartProvider = ({ children }) => {
   };
 
   // Formatear precios
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(price);
-  };
+  const formatPrice = (price) => currencyFormatter.formatSimple(price);
 
   // Valor del contexto
   const value = {

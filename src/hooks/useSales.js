@@ -77,8 +77,9 @@ const useSales = () => {
       });
       
       const response = await api.get(`/sales/orders?${params.toString()}`);
-      const ordersData = response.data.orders || response.data;
-      const paginationData = response.data.pagination || {};
+      const body = response.data;
+      const ordersData = body.data ?? body.orders ?? (Array.isArray(body) ? body : []);
+      const paginationData = body.pagination || {};
       
       setOrders(ordersData);
       setPagination(prev => ({
@@ -488,10 +489,12 @@ const useSales = () => {
   }, [filters]);
 
   // Formatear moneda
-  const formatCurrency = useCallback((amount, currency = 'EUR') => {
-    return new Intl.NumberFormat('es-ES', {
+  const formatCurrency = useCallback((amount, currency = 'COP') => {
+    return new Intl.NumberFormat('es-CO', {
       style: 'currency',
-      currency: currency
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(amount);
   }, []);
 
@@ -573,6 +576,27 @@ const useSales = () => {
     return Object.values(filters).some(value => value !== '' && value !== null);
   }, [filters]);
 
+  const getSales = useCallback(async (params = {}) => {
+    const response = await api.get('/sales', { params });
+    const payload = response.data;
+    return {
+      data: payload.sales || payload.data || [],
+      pagination: payload.pagination,
+    };
+  }, []);
+
+  const getTopProducts = useCallback(async (params = {}) => {
+    const response = await api.get('/reports/top-products', { params });
+    const payload = response.data;
+    return payload.data?.top_productos || payload.top_productos || payload.data || [];
+  }, []);
+
+  const getSalesBySeller = useCallback(async (params = {}) => {
+    const response = await api.get('/reports/sales-by-seller', { params });
+    const payload = response.data;
+    return payload.data?.vendedores || payload.vendedores || payload.data || [];
+  }, []);
+
   return {
     // Datos principales
     orders,
@@ -633,7 +657,11 @@ const useSales = () => {
     
     // Loading states específicos
     isLoadingOrders: loading && orders.length === 0,
-    isLoadingOrder: loading && currentOrder === null
+    isLoadingOrder: loading && currentOrder === null,
+
+    getSales,
+    getTopProducts,
+    getSalesBySeller,
   };
 };
 

@@ -4,9 +4,10 @@ const getEnv = (key, fallback = '') => {
 };
 
 export const APP_ENV = {
-  API_URL: getEnv('VITE_API_URL', 'http://localhost:5000/api'),
+  APP_NAME: getEnv('VITE_APP_NAME', 'CoreX'),
+  API_URL: getEnv('VITE_API_URL', 'http://localhost:3004/api'),
   API_TIMEOUT: Number(getEnv('VITE_API_TIMEOUT', '30000')),
-  WHATSAPP_PHONE: getEnv('VITE_WHATSAPP_PHONE', '34123456789'),
+  WHATSAPP_PHONE: getEnv('VITE_WHATSAPP_PHONE', '573023705751'),
   WHATSAPP_API_URL: getEnv('VITE_WHATSAPP_API_URL', ''),
   WHATSAPP_API_TOKEN: getEnv('VITE_WHATSAPP_API_TOKEN', ''),
   WHATSAPP_BUSINESS_ACCOUNT: getEnv('VITE_WHATSAPP_BUSINESS_ACCOUNT', 'false') === 'true',

@@ -126,8 +126,8 @@ export const services = [
 ];
 
 export const randomPads = [
-  { id: 1, name: 'Mousepad Topo Blanco', price: '$ 499.00 MXN', gradient: 'from-gray-100 via-white to-gray-200' },
-  { id: 2, name: 'Mousepad Topo Negro', price: '$ 499.00 MXN', gradient: 'from-gray-800 via-gray-900 to-black' },
-  { id: 3, name: 'Mousepad Líquido Azul', price: '$ 499.00 MXN', gradient: 'from-cyan-400 via-blue-500 to-indigo-600' },
-  { id: 4, name: 'Mousepad Líquido Morado', price: '$ 499.00 MXN', gradient: 'from-purple-400 via-fuchsia-500 to-violet-700' },
+  { id: 1, name: 'Mousepad Topo Blanco', price: '$ 29.900', gradient: 'from-gray-100 via-white to-gray-200' },
+  { id: 2, name: 'Mousepad Topo Negro', price: '$ 29.900', gradient: 'from-gray-800 via-gray-900 to-black' },
+  { id: 3, name: 'Mousepad Líquido Azul', price: '$ 34.900', gradient: 'from-cyan-400 via-blue-500 to-indigo-600' },
+  { id: 4, name: 'Mousepad Líquido Morado', price: '$ 34.900', gradient: 'from-purple-400 via-fuchsia-500 to-violet-700' },
 ];

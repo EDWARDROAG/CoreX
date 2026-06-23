@@ -4,23 +4,23 @@
 // frontend/src/utils/formatters.js
 
 /**
- * Formateadores de moneda y números
+ * Formateadores de moneda (COP — Colombia por defecto)
  */
 export const currencyFormatter = {
   /**
-   * Formatear como moneda (EUR)
+   * Formatear como moneda (COP)
    * @param {number} value - Valor a formatear
-   * @param {string} currency - Código de moneda (EUR, USD, GBP, etc.)
+   * @param {string} currency - Código de moneda (COP, USD, etc.)
    * @returns {string}
    */
-  format: (value, currency = 'EUR') => {
-    if (value === null || value === undefined) return '€0,00';
+  format: (value, currency = 'COP') => {
+    if (value === null || value === undefined) return '$0';
     
-    return new Intl.NumberFormat('es-ES', {
+    return new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(value);
   },
 
@@ -30,10 +30,10 @@ export const currencyFormatter = {
    * @param {string} currency - Código de moneda
    * @returns {string}
    */
-  formatSimple: (value, currency = 'EUR') => {
-    if (value === null || value === undefined) return '€0';
+  formatSimple: (value, currency = 'COP') => {
+    if (value === null || value === undefined) return '$0';
     
-    return new Intl.NumberFormat('es-ES', {
+    return new Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 0,

@@ -3,7 +3,8 @@
 
 // frontend/src/hooks/useProducts.js
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import api from '../services/api';
+import api, { extractList } from '../services/api';
+import { currencyFormatter } from '../utils/formatters';
 
 const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
   // Estados principales
@@ -87,7 +88,7 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
       if (params.limit) queryParams.append('limit', params.limit);
       
       const response = await api.get(`/products?${queryParams.toString()}`);
-      const productsData = response.data.products || response.data;
+      const productsData = extractList(response.data, 'products');
       
       setProducts(productsData);
       return productsData;
@@ -118,8 +119,9 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
   const fetchBrands = useCallback(async () => {
     try {
       const response = await api.get('/brands');
-      setBrands(response.data);
-      return response.data;
+      const brandsData = response.data?.data ?? response.data ?? [];
+      setBrands(brandsData);
+      return brandsData;
     } catch (err) {
       console.error('Error fetching brands:', err);
       setBrands([]);
@@ -245,7 +247,7 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
   const fetchRelatedProducts = useCallback(async (category, currentProductId, limit = 4) => {
     try {
       const response = await api.get(`/products?category=${category}&limit=${limit + 1}`);
-      const products = response.data.products || response.data;
+      const products = extractList(response.data, 'products');
       const related = products.filter(p => p.id !== currentProductId).slice(0, limit);
       setRelatedProducts(related);
       return related;
@@ -260,7 +262,7 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
   const fetchFeaturedProducts = useCallback(async (limit = 6) => {
     try {
       const response = await api.get(`/products/featured?limit=${limit}`);
-      const featured = response.data.products || response.data;
+      const featured = extractList(response.data, 'products');
       setFeaturedProducts(featured);
       return featured;
     } catch (err) {
@@ -274,7 +276,7 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
   const fetchBestSellers = useCallback(async (limit = 8) => {
     try {
       const response = await api.get(`/products/best-sellers?limit=${limit}`);
-      const bestSellersData = response.data.products || response.data;
+      const bestSellersData = extractList(response.data, 'products');
       setBestSellers(bestSellersData);
       return bestSellersData;
     } catch (err) {
@@ -362,7 +364,7 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
     
     try {
       const response = await api.get(`/products/search?q=${query}&limit=${limit}`);
-      return response.data.products || response.data;
+      return extractList(response.data, 'products');
     } catch (err) {
       console.error('Error searching products:', err);
       return [];
@@ -376,7 +378,7 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
         ? `/products?category=${category}&limit=${limit}`
         : `/products?category=${category}`;
       const response = await api.get(url);
-      return response.data.products || response.data;
+      return extractList(response.data, 'products');
     } catch (err) {
       console.error('Error fetching products by category:', err);
       return [];
@@ -490,11 +492,8 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
   }, [selectedProduct]);
 
   // Formatear precio
-  const formatPrice = useCallback((price, currency = 'EUR') => {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: currency
-    }).format(price);
+  const formatPrice = useCallback((price, currency = 'COP') => {
+    return currencyFormatter.formatSimple(price, currency);
   }, []);
 
   // Calcular precio con descuento
@@ -514,12 +513,17 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
   const getProductsByIds = useCallback(async (ids) => {
     try {
       const response = await api.post('/products/by-ids', { ids });
-      return response.data.products || response.data;
+      return extractList(response.data, 'products');
     } catch (err) {
       console.error('Error fetching products by ids:', err);
       return [];
     }
   }, []);
+
+  const getProducts = useCallback(async (params = {}) => {
+    const productsData = await fetchProducts(params);
+    return { data: productsData };
+  }, [fetchProducts]);
 
   // Memoized values
   const currentProducts = useMemo(() => getCurrentPageProducts(), [getCurrentPageProducts]);
@@ -555,6 +559,7 @@ const useProducts = (initialFilters = {}, initialItemsPerPage = 12) => {
     
     // Métodos de productos
     fetchProducts,
+    getProducts,
     getProductById,
     fetchRelatedProducts,
     fetchFeaturedProducts,

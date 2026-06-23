@@ -4,6 +4,7 @@
 // frontend/src/context/ProductContext.jsx
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import api from '../services/api';
+import { currencyFormatter } from '../utils/formatters';
 
 // Crear el contexto
 const ProductContext = createContext({});
@@ -393,10 +394,7 @@ export const ProductProvider = ({ children }) => {
     
     // Utilidades
     getPriceRange,
-    formatPrice: (price) => new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(price),
+    formatPrice: (price) => currencyFormatter.formatSimple(price),
     
     // Getters útiles
     totalProducts: filteredProducts.length,

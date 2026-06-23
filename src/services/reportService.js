@@ -666,10 +666,12 @@ const reportService = {
    * @param {string} currency - Código de moneda
    * @returns {string}
    */
-  formatCurrency: (amount, currency = 'EUR') => {
-    return new Intl.NumberFormat('es-ES', {
+  formatCurrency: (amount, currency = 'COP') => {
+    return new Intl.NumberFormat('es-CO', {
       style: 'currency',
-      currency: currency
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(amount);
   },
 

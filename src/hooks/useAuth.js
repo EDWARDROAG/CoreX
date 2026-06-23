@@ -223,7 +223,6 @@ const useAuth = () => {
     return localStorage.getItem('rememberedEmail') || '';
   }, []);
 
-  // Refrescar token
   const refreshToken = useCallback(async () => {
     try {
       const response = await api.post('/auth/refresh-token');
@@ -236,6 +235,56 @@ const useAuth = () => {
       return { success: false };
     }
   }, [setAuthToken, logout]);
+
+  const getUsers = useCallback(async () => {
+    const response = await api.get('/users');
+    return response.data.users || response.data.data || [];
+  }, []);
+
+  const createUser = useCallback(async (userData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.post('/users', userData);
+      return { success: true, user: response.data.user || response.data };
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Error al crear usuario';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const updateUser = useCallback(async (id, userData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.put(`/users/${id}`, userData);
+      return { success: true, user: response.data.user || response.data };
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Error al actualizar usuario';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const deleteUser = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await api.delete(`/users/${id}`);
+      return { success: true };
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Error al eliminar usuario';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   // Limpiar errores
   const clearError = useCallback(() => {
@@ -255,6 +304,10 @@ const useAuth = () => {
     register,
     logout,
     updateProfile,
+    getUsers,
+    createUser,
+    updateUser,
+    deleteUser,
     
     // Métodos de contraseña
     changePassword,
@@ -271,7 +324,7 @@ const useAuth = () => {
     // Getters útiles
     isAdmin: hasRole('admin'),
     isUser: hasRole('user'),
-    userName: user?.name || user?.username || '',
+    userName: user?.nombre || user?.name || user?.username || '',
     userEmail: user?.email || '',
     userAvatar: user?.avatar || null,
     userRole: user?.role || null

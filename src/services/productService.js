@@ -699,10 +699,12 @@ const productService = {
    * @param {string} currency - Código de moneda
    * @returns {string}
    */
-  formatPrice: (price, currency = 'EUR') => {
-    return new Intl.NumberFormat('es-ES', {
+  formatPrice: (price, currency = 'COP') => {
+    return new Intl.NumberFormat('es-CO', {
       style: 'currency',
-      currency: currency
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(price);
   },
 

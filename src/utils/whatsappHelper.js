@@ -3,6 +3,9 @@
 
 // frontend/src/utils/whatsappHelper.js
 import { APP_ENV } from '../config/env';
+import { currencyFormatter } from './formatters';
+
+const formatMoney = (amount) => currencyFormatter.formatSimple(amount);
 
 /**
  * Configuración de WhatsApp
@@ -35,9 +38,9 @@ export const formatWhatsAppNumber = (phone) => {
     cleaned = cleaned.substring(2);
   }
   
-  // Asegurar que tenga el código de país (asumimos España si no tiene)
-  if (!cleaned.startsWith('34') && cleaned.length === 9) {
-    cleaned = `34${cleaned}`;
+  // Código de país Colombia si el número local tiene 10 dígitos
+  if (!cleaned.startsWith('57') && cleaned.length === 10) {
+    cleaned = `57${cleaned}`;
   }
   
   return cleaned;
@@ -106,12 +109,12 @@ export const createProductMessage = (product) => {
   let message = `*${product.name}*\n\n`;
   
   if (product.price) {
-    message += `💰 Precio: ${product.price}€\n`;
+    message += `💰 Precio: ${formatMoney(product.price)}\n`;
   }
   
   if (product.discount) {
     const discountedPrice = product.price * (1 - product.discount / 100);
-    message += `🎉 Oferta: ${discountedPrice}€ (${product.discount}% descuento)\n`;
+    message += `🎉 Oferta: ${formatMoney(discountedPrice)} (${product.discount}% descuento)\n`;
   }
   
   if (product.description) {
@@ -152,7 +155,7 @@ export const createCartMessage = (cartItems, total, customer = null) => {
   cartItems.forEach((item, index) => {
     message += `${index + 1}. ${item.name}\n`;
     message += `   Cantidad: ${item.quantity}\n`;
-    message += `   Precio unitario: ${item.price}€\n`;
+    message += `   Precio unitario: ${formatMoney(item.price)}\n`;
     
     if (item.selectedOptions) {
       if (item.selectedOptions.size) message += `   Talla: ${item.selectedOptions.size}\n`;
@@ -160,10 +163,10 @@ export const createCartMessage = (cartItems, total, customer = null) => {
     }
     
     const subtotal = item.price * item.quantity;
-    message += `   Subtotal: ${subtotal}€\n\n`;
+    message += `   Subtotal: ${formatMoney(subtotal)}\n\n`;
   });
   
-  message += `*Total: ${total}€*\n\n`;
+  message += `*Total: ${formatMoney(total)}*\n\n`;
   message += `¡Hola! Me gustaría realizar este pedido. ¿Podrían confirmarme disponibilidad y forma de pago?`;
   
   return message;
@@ -225,10 +228,10 @@ export const createOrderConfirmationMessage = (order) => {
   
   message += `*Resumen del pedido:*\n`;
   order.items.forEach(item => {
-    message += `• ${item.name} x${item.quantity} - ${item.price * item.quantity}€\n`;
+    message += `• ${item.name} x${item.quantity} - ${formatMoney(item.price * item.quantity)}\n`;
   });
   
-  message += `\n*Total: ${order.total}€*\n`;
+  message += `\n*Total: ${formatMoney(order.total)}*\n`;
   message += `*Método de pago:* ${order.paymentMethod}\n`;
   
   if (order.shippingAddress) {

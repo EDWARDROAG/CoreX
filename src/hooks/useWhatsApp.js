@@ -4,6 +4,9 @@
 // frontend/src/hooks/useWhatsApp.js
 import { useState, useCallback } from 'react';
 import { APP_ENV } from '../config/env';
+import { currencyFormatter } from '../utils/formatters';
+
+const formatMoney = (amount) => currencyFormatter.formatSimple(amount);
 
 const useWhatsApp = () => {
   const [loading, setLoading] = useState(false);
@@ -31,8 +34,8 @@ const useWhatsApp = () => {
     }
     
     // Asegurar que tenga el código de país (asumimos España si no tiene)
-    if (!cleaned.startsWith('34') && cleaned.length === 9) {
-      cleaned = `34${cleaned}`;
+    if (!cleaned.startsWith('57') && cleaned.length === 10) {
+      cleaned = `57${cleaned}`;
     }
     
     return cleaned;
@@ -184,7 +187,7 @@ const useWhatsApp = () => {
   // Crear mensaje de producto
   const createProductMessage = useCallback((product) => {
     let message = `*${product.name}*\n`;
-    message += `Precio: ${product.price}€\n`;
+    message += `Precio: ${formatMoney(product.price)}\n`;
     if (product.description) {
       message += `\n${product.description}\n`;
     }
@@ -200,12 +203,12 @@ const useWhatsApp = () => {
     let message = '*Mi Carrito de Compras*\n\n';
     
     cartItems.forEach((item, index) => {
-      message += `${index + 1}. ${item.name} x${item.quantity} - ${item.price * item.quantity}€\n`;
+      message += `${index + 1}. ${item.name} x${item.quantity} - ${formatMoney(item.price * item.quantity)}\n`;
       if (item.selectedOptions?.size) message += `   Talla: ${item.selectedOptions.size}\n`;
       if (item.selectedOptions?.color) message += `   Color: ${item.selectedOptions.color}\n`;
     });
     
-    message += `\n*Total: ${total}€*\n`;
+    message += `\n*Total: ${formatMoney(total)}*\n`;
     message += `\n¡Hola! Me interesa este pedido. ¿Podrían ayudarme?`;
     
     return message;
@@ -241,10 +244,10 @@ const useWhatsApp = () => {
     message += '*Detalles del pedido:*\n';
     
     orderData.items.forEach(item => {
-      message += `• ${item.name} x${item.quantity} - ${item.price * item.quantity}€\n`;
+      message += `• ${item.name} x${item.quantity} - ${formatMoney(item.price * item.quantity)}\n`;
     });
     
-    message += `\n*Total: ${orderData.total}€*\n`;
+    message += `\n*Total: ${formatMoney(orderData.total)}*\n`;
     message += `*Método de pago:* ${orderData.paymentMethod}\n`;
     message += `*Dirección de envío:* ${orderData.shippingAddress}\n\n`;
     message += `Te mantendremos informado sobre el estado de tu pedido.\n`;

@@ -183,7 +183,7 @@ const AdminDashboard = () => {
           value={metrics?.ventas_hoy?.total_facturado || 0}
           subtitle={`${metrics?.ventas_hoy?.total_ventas || 0} transacciones`}
           icon="💰"
-          color="bg-blue-500"
+          color="blue"
           trend={metrics?.ventas_hoy?.trend}
         />
         <StatsCard
@@ -191,21 +191,21 @@ const AdminDashboard = () => {
           value={metrics?.ventas_semana?.total_facturado || 0}
           subtitle={`${metrics?.ventas_semana?.total_ventas || 0} transacciones`}
           icon="📊"
-          color="bg-green-500"
+          color="green"
         />
         <StatsCard
           title="Ventas Mes"
           value={metrics?.ventas_mes?.total_facturado || 0}
           subtitle={`${metrics?.ventas_mes?.total_ventas || 0} transacciones`}
           icon="📅"
-          color="bg-purple-500"
+          color="purple"
         />
         <StatsCard
           title="Inventario"
           value={metrics?.inventario?.disponibles || 0}
           subtitle={`${metrics?.inventario?.vendidos || 0} vendidos`}
           icon="📦"
-          color="bg-orange-500"
+          color="orange"
         />
       </div>
 

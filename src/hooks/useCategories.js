@@ -3,7 +3,7 @@
 
 // frontend/src/hooks/useCategories.js
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import api from '../services/api';
+import api, { extractList } from '../services/api';
 
 const useCategories = () => {
   // Estados principales
@@ -69,7 +69,7 @@ const useCategories = () => {
       });
       
       const response = await api.get(`/categories?${params.toString()}`);
-      const categoriesData = response.data.categories || response.data;
+      const categoriesData = extractList(response.data, 'categories');
       const paginationData = response.data.pagination || {};
       
       setCategories(categoriesData);
@@ -90,11 +90,21 @@ const useCategories = () => {
     }
   }, [filters, pagination.currentPage, pagination.itemsPerPage]);
 
+  const getCategories = useCallback(async () => {
+    try {
+      const response = await api.get('/categories');
+      return extractList(response.data, 'categories');
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+      return [];
+    }
+  }, []);
+
   // Obtener todas las categorías (sin paginación)
   const fetchAllCategories = useCallback(async () => {
     try {
       const response = await api.get('/categories/all');
-      const allCategoriesData = response.data.categories || response.data;
+      const allCategoriesData = extractList(response.data, 'categories');
       setAllCategories(allCategoriesData);
       return allCategoriesData;
     } catch (err) {
@@ -238,7 +248,7 @@ const useCategories = () => {
   const getSubcategories = useCallback(async (parentId) => {
     try {
       const response = await api.get(`/categories/${parentId}/subcategories`);
-      return response.data.categories || response.data;
+      return extractList(response.data, 'categories');
     } catch (err) {
       console.error('Error fetching subcategories:', err);
       return [];
@@ -577,6 +587,7 @@ const useCategories = () => {
     // Métodos CRUD
     fetchCategories,
     fetchAllCategories,
+    getCategories,
     getCategoryById,
     createCategory,
     updateCategory,

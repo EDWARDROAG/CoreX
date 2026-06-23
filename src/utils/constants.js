@@ -302,14 +302,16 @@ export const COLORS = {
 // ============================================
 
 export const CURRENCY = {
-  DEFAULT: 'EUR',
+  DEFAULT: 'COP',
   SYMBOLS: {
+    COP: '$',
     EUR: '€',
     USD: '$',
     GBP: '£',
     JPY: '¥'
   },
   LOCALES: {
+    COP: 'es-CO',
     EUR: 'es-ES',
     USD: 'en-US',
     GBP: 'en-GB',

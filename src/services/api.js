@@ -292,7 +292,16 @@ const getValidationErrors = (error) => {
 
 // Exportar instancia principal y métodos auxiliares
 export default api;
+const extractList = (payload, key) => {
+  if (!payload) return [];
+  if (Array.isArray(payload.data)) return payload.data;
+  if (Array.isArray(payload[key])) return payload[key];
+  if (Array.isArray(payload)) return payload;
+  return [];
+};
+
 export {
+  extractList,
   uploadFile,
   downloadFile,
   cancelRequest,
