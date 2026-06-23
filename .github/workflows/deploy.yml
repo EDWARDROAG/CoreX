@@ -31,10 +31,7 @@ jobs:
         run: npm ci
 
       - name: Build vitrina (GitHub Pages)
-        env:
-          VITE_DEPLOY_TARGET: github
-          VITE_VITRINA_MODE: 'true'
-        run: npm run build
+        run: npm run build:gh-pages
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4

@@ -5,7 +5,10 @@ import { resolve } from 'node:path';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const isGhPages = mode === 'production' && env.VITE_DEPLOY_TARGET === 'github';
+  const deployTarget = process.env.VITE_DEPLOY_TARGET || env.VITE_DEPLOY_TARGET;
+  const isGhPages =
+    mode === 'gh-pages' ||
+    (mode === 'production' && deployTarget === 'github');
 
   return {
     plugins: [
